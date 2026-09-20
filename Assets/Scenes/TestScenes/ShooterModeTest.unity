@@ -161,6 +161,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 359856334}
+  - component: {fileID: 359856335}
+  - component: {fileID: 359856336}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -185,6 +187,50 @@ Transform:
   - {fileID: 1341468424}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &359856335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359856333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: bb541b225fcaefa4ca265245145a40c4, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Gameplay
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+--- !u!114 &359856336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359856333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de85f77e84c7d2a459673bec629c6943, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+  movementInput: {x: 0, y: 0}
+  pointerInput: {x: 0, y: 0}
 --- !u!43 &1035063216
 Mesh:
   m_ObjectHideFlags: 0
@@ -541,11 +587,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7549530855202475692, guid: f69c8320ded0f2741b256872ad206cdf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.157
+      value: -0.1636
       objectReference: {fileID: 0}
     - target: {fileID: 7549530855202475692, guid: f69c8320ded0f2741b256872ad206cdf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.495
+      value: 0.4758
       objectReference: {fileID: 0}
     - target: {fileID: 7549530855202475692, guid: f69c8320ded0f2741b256872ad206cdf, type: 3}
       propertyPath: m_LocalRotation.w
