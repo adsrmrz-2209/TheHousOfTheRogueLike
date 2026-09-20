@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,6 +23,13 @@ public class InputManager : MonoBehaviour
         playerControls.Gameplay.Movement.performed -= MovementPerformed;
         playerControls.Gameplay.Pointer.performed -= PointerPerformed;
         playerControls.Disable();
+    }
+
+    private void SubscribeToInputAction(InputAction inputAction, Action<InputAction.CallbackContext> action)
+    {
+        inputAction.started += action;
+        inputAction.performed += action;
+        inputAction.canceled += action;
     }
 
     private void MovementPerformed(InputAction.CallbackContext ctx)
