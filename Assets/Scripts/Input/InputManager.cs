@@ -5,40 +5,106 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    [ReadOnly] public Vector2 movementInput;
-    [ReadOnly] public Vector2 pointerInput;
+    [SerializeField, ReadOnly] private Vector2 movementInput;
+    [SerializeField, ReadOnly] private Vector2 pointerInput;
     private PlayerControls playerControls;
+
+    public Vector2 MovementInput => movementInput;
+    public Vector2 PointerInput => pointerInput;
+
+    public /*static*/ event Action<InputAction.CallbackContext> OnMovementStarted;
+    public /*static*/ event Action<InputAction.CallbackContext> OnMovementPerformed;
+    public /*static*/ event Action<InputAction.CallbackContext> OnMovementCanceled;
+
+    public /*static*/ event Action<InputAction.CallbackContext> OnPointerStarted;
+    public /*static*/ event Action<InputAction.CallbackContext> OnPointerPerformed;
+    public /*static*/ event Action<InputAction.CallbackContext> OnPointerCanceled;
 
     private void Awake()
     {
         playerControls = new();
+        
+        MovementInputSubscribe();
+        PointerInputSubscribe();
 
         playerControls.Enable();
-        playerControls.Gameplay.Movement.performed += MovementPerformed;
-        playerControls.Gameplay.Pointer.performed += PointerPerformed;
     }
 
     private void OnDestroy()
     {
-        playerControls.Gameplay.Movement.performed -= MovementPerformed;
-        playerControls.Gameplay.Pointer.performed -= PointerPerformed;
+        MovementInputUnSubscribe();
+        PointerInputUnSubscribe();
+
         playerControls.Disable();
     }
 
-    private void SubscribeToInputAction(InputAction inputAction, Action<InputAction.CallbackContext> action)
+    #region MOVEMENT
+    private void MovementInputSubscribe()
     {
-        inputAction.started += action;
-        inputAction.performed += action;
-        inputAction.canceled += action;
+        playerControls.Gameplay.Movement.started += MovementInputInvoke;
+        playerControls.Gameplay.Movement.performed += MovementInputInvoke;
+        playerControls.Gameplay.Movement.canceled += MovementInputInvoke;   
     }
 
-    private void MovementPerformed(InputAction.CallbackContext ctx)
+    private void MovementInputUnSubscribe()
     {
-        movementInput = ctx.ReadValue<Vector2>();
+        playerControls.Gameplay.Movement.started -= MovementInputInvoke;
+        playerControls.Gameplay.Movement.performed -= MovementInputInvoke;
+        playerControls.Gameplay.Movement.canceled -= MovementInputInvoke;
     }
 
-    private void PointerPerformed(InputAction.CallbackContext ctx)
+    private void MovementInputInvoke(InputAction.CallbackContext ctx)
     {
-        pointerInput = ctx.ReadValue<Vector2>();
+        if (ctx.started)
+        {
+            OnMovementStarted?.Invoke(ctx);
+        }
+        else if (ctx.performed)
+        {
+            movementInput = ctx.ReadValue<Vector2>();
+            OnMovementPerformed?.Invoke(ctx);
+        }
+        else if (ctx.canceled)
+        {
+            movementInput = Vector2.zero;
+            OnMovementCanceled?.Invoke(ctx);
+        }
     }
+    #endregion
+
+    #region POINTER
+
+    private void PointerInputSubscribe()
+    {
+        playerControls.Gameplay.Pointer.started += PointerInputInvoke;
+        playerControls.Gameplay.Pointer.performed += PointerInputInvoke;
+        playerControls.Gameplay.Pointer.canceled += PointerInputInvoke;
+    }
+
+    private void PointerInputUnSubscribe()
+    {
+        playerControls.Gameplay.Pointer.started -= PointerInputInvoke;
+        playerControls.Gameplay.Pointer.performed -= PointerInputInvoke;
+        playerControls.Gameplay.Pointer.canceled -= PointerInputInvoke;
+    }
+
+    private void PointerInputInvoke(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            OnPointerStarted?.Invoke(ctx);
+        }
+        else if (ctx.performed)
+        {
+            pointerInput = ctx.ReadValue<Vector2>();
+            OnPointerPerformed?.Invoke(ctx);
+        }
+        else if (ctx.canceled)
+        {
+            pointerInput = Vector2.zero;
+            OnPointerCanceled?.Invoke(ctx);
+        }
+    }
+    #endregion
+
 }
