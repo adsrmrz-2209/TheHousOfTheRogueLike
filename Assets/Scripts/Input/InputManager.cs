@@ -6,34 +6,38 @@ using UnityEngine.InputSystem;
 public class InputManager : MonoBehaviour
 {
     [SerializeField, ReadOnly] private Vector2 movementInput;
-    [SerializeField, ReadOnly] private Vector2 pointerInput;
+    [SerializeField, ReadOnly] private Vector2 lookInput;
     private PlayerControls playerControls;
 
     public Vector2 MovementInput => movementInput;
-    public Vector2 PointerInput => pointerInput;
+    public Vector2 LookInput => lookInput;
 
     public /*static*/ event Action<InputAction.CallbackContext> OnMovementStarted;
     public /*static*/ event Action<InputAction.CallbackContext> OnMovementPerformed;
     public /*static*/ event Action<InputAction.CallbackContext> OnMovementCanceled;
 
-    public /*static*/ event Action<InputAction.CallbackContext> OnPointerStarted;
-    public /*static*/ event Action<InputAction.CallbackContext> OnPointerPerformed;
-    public /*static*/ event Action<InputAction.CallbackContext> OnPointerCanceled;
+    public /*static*/ event Action<InputAction.CallbackContext> OnLookStarted;
+    public /*static*/ event Action<InputAction.CallbackContext> OnLookPerformed;
+    public /*static*/ event Action<InputAction.CallbackContext> OnLookCanceled;
 
     private void Awake()
     {
         playerControls = new();
-        
+    }
+
+    private void OnEnable()
+    {
         MovementInputSubscribe();
-        PointerInputSubscribe();
+        LookInputSubscribe();
 
         playerControls.Enable();
     }
 
-    private void OnDestroy()
+
+    private void OnDisable()
     {
         MovementInputUnSubscribe();
-        PointerInputUnSubscribe();
+        LookInputUnSubscribe();
 
         playerControls.Disable();
     }
@@ -74,34 +78,34 @@ public class InputManager : MonoBehaviour
 
     #region POINTER
 
-    private void PointerInputSubscribe()
+    private void LookInputSubscribe()
     {
-        playerControls.Gameplay.Pointer.started += PointerInputInvoke;
-        playerControls.Gameplay.Pointer.performed += PointerInputInvoke;
-        playerControls.Gameplay.Pointer.canceled += PointerInputInvoke;
+        playerControls.Gameplay.Look.started += LookInputInvoke;
+        playerControls.Gameplay.Look.performed += LookInputInvoke;
+        playerControls.Gameplay.Look.canceled += LookInputInvoke;
     }
 
-    private void PointerInputUnSubscribe()
+    private void LookInputUnSubscribe()
     {
-        playerControls.Gameplay.Pointer.started -= PointerInputInvoke;
-        playerControls.Gameplay.Pointer.performed -= PointerInputInvoke;
-        playerControls.Gameplay.Pointer.canceled -= PointerInputInvoke;
+        playerControls.Gameplay.Look.started -= LookInputInvoke;
+        playerControls.Gameplay.Look.performed -= LookInputInvoke;
+        playerControls.Gameplay.Look.canceled -= LookInputInvoke;
     }
 
-    private void PointerInputInvoke(InputAction.CallbackContext ctx)
+    private void LookInputInvoke(InputAction.CallbackContext ctx)
     {
         if (ctx.started)
         {
-            OnPointerStarted?.Invoke(ctx);
+            OnLookStarted?.Invoke(ctx);
         }
         else if (ctx.performed)
         {
-            pointerInput = ctx.ReadValue<Vector2>();
-            OnPointerPerformed?.Invoke(ctx);
+            lookInput = ctx.ReadValue<Vector2>();
+            OnLookPerformed?.Invoke(ctx);
         }
         else if (ctx.canceled)
         {
-            OnPointerCanceled?.Invoke(ctx);
+            OnLookCanceled?.Invoke(ctx);
         }
     }
     #endregion

@@ -7,8 +7,8 @@
             "id": "d8e593c7-168d-4626-a864-2405c425eb49",
             "actions": [
                 {
-                    "name": "Pointer",
-                    "type": "Value",
+                    "name": "Look",
+                    "type": "PassThrough",
                     "id": "494e1233-735f-4469-a01b-8863824bc7c0",
                     "expectedControlType": "Vector2",
                     "processors": "",
@@ -55,7 +55,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MnKnGamepad",
-                    "action": "Pointer",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -66,7 +66,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pointer",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
