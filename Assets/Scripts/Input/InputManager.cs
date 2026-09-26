@@ -101,7 +101,6 @@ public class InputManager : MonoBehaviour
         }
         else if (ctx.canceled)
         {
-            pointerInput = Vector2.zero;
             OnPointerCanceled?.Invoke(ctx);
         }
     }
