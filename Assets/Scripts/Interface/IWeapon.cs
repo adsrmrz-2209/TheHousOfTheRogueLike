@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IWeapon
@@ -8,6 +9,7 @@ public interface IWeapon
     public int Bullets { get; set; }
     public float ReloadSpeed { get; set; }
     public int WeaponLevel { get; set; }
+    public List<GameObject> Attachments { get; set; }
 
     public void Fire();
     public void Reload();
