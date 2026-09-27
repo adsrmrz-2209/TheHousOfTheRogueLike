@@ -3,15 +3,14 @@ using UnityEngine;
 
 public interface IWeapon
 {
-    public string Name { get; set; }
-    public float BaseDamage { get; set; }
-    public float FireRate { get; set; }
-    public int Bullets { get; set; }
-    public float ReloadSpeed { get; set; }
+    public WeaponDefinitionSO WeaponDefinition { get; }
+    public WeaponStats Stats { get; set; }
+    public string WeaponId { get; }
+    public int CurrentAmmo { get; set; }
     public int WeaponLevel { get; set; }
-    public List<GameObject> Attachments { get; set; }
 
     public void Fire();
     public void Reload();
     public void Upgrade();
+    
 }
