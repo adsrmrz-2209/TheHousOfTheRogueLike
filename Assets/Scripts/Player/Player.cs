@@ -1,30 +1,43 @@
-using NaughtyAttributes;
-using System;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using NaughtyAttributes;
+using System;
 
-public class InputManager : MonoBehaviour
+[RequireComponent(typeof(CharacterController))]
+public class Player : MonoBehaviour
 {
+    private PlayerData playerData;
+
     [SerializeField, ReadOnly] private Vector2 movementInput;
     [SerializeField, ReadOnly] private Vector2 lookInput;
-    private PlayerControls playerControls;
-
     public Vector2 MovementInput => movementInput;
     public Vector2 LookInput => lookInput;
 
-    public /*static*/ event Action<InputAction.CallbackContext> OnMovementStarted;
-    public /*static*/ event Action<InputAction.CallbackContext> OnMovementPerformed;
-    public /*static*/ event Action<InputAction.CallbackContext> OnMovementCanceled;
+    private float gravityValue = -9.81f;
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
 
-    public /*static*/ event Action<InputAction.CallbackContext> OnLookStarted;
-    public /*static*/ event Action<InputAction.CallbackContext> OnLookPerformed;
-    public /*static*/ event Action<InputAction.CallbackContext> OnLookCanceled;
+    private CharacterController controller;
+    private PlayerControls playerControls;
 
+    public event Action<InputAction.CallbackContext> OnMovementStarted;
+    public event Action<InputAction.CallbackContext> OnMovementPerformed;
+    public event Action<InputAction.CallbackContext> OnMovementCanceled;
+
+    public event Action<InputAction.CallbackContext> OnLookStarted;
+    public event Action<InputAction.CallbackContext> OnLookPerformed;
+    public event Action<InputAction.CallbackContext> OnLookCanceled;
+
+    public void CreatePlayerData(PlayerData playerData)
+    {
+        this.playerData = playerData;
+    }
 
     private void Awake()
     {
         playerControls = new();
+        controller = GetComponent<CharacterController>();
     }
 
     private void OnEnable()
@@ -35,7 +48,6 @@ public class InputManager : MonoBehaviour
         playerControls.Enable();
     }
 
-
     private void OnDisable()
     {
         MovementInputUnSubscribe();
@@ -44,12 +56,55 @@ public class InputManager : MonoBehaviour
         playerControls.Disable();
     }
 
+    private void OnDestroy()
+    {
+        playerControls.Dispose();
+    }
+
+    void Update()
+    {
+        Movement();
+    }
+
+    private void Movement()
+    {
+        groundedPlayer = controller.isGrounded;
+
+        if (groundedPlayer)
+        {
+            // Slight downward velocity to keep grounded stable
+            if (playerVelocity.y < -2f)
+                playerVelocity.y = -2f;
+        }
+
+        // Read input
+        Vector2 input = movementInput;
+        Vector3 move = new Vector3(input.x, 0, input.y);
+        move = Vector3.ClampMagnitude(move, 1f);
+
+        if (move != Vector3.zero)
+            transform.forward = move;
+
+        // Jump using WasPressedThisFrame()
+        //if (groundedPlayer && jumpAction.action.WasPressedThisFrame())
+        //{
+        //    playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityValue);
+        //}
+
+        // Apply gravity
+        playerVelocity.y += gravityValue * Time.deltaTime;
+
+        // Move
+        Vector3 finalMove = move * playerData.Speed+ Vector3.up * playerVelocity.y;
+        controller.Move(finalMove * Time.deltaTime);
+    }
+
     #region MOVEMENT
     private void MovementInputSubscribe()
     {
         playerControls.Gameplay.Movement.started += MovementInputInvoke;
         playerControls.Gameplay.Movement.performed += MovementInputInvoke;
-        playerControls.Gameplay.Movement.canceled += MovementInputInvoke;   
+        playerControls.Gameplay.Movement.canceled += MovementInputInvoke;
     }
 
     private void MovementInputUnSubscribe()
