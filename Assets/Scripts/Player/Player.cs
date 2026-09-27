@@ -7,7 +7,7 @@ using System;
 [RequireComponent(typeof(CharacterController))]
 public class Player : MonoBehaviour
 {
-    private PlayerData playerData;
+    public PlayerData playerData {  get; private set; }
 
     [SerializeField, ReadOnly] private Vector2 movementInput;
     [SerializeField, ReadOnly] private Vector2 lookInput;
