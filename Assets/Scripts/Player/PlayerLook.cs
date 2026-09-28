@@ -7,10 +7,21 @@ public class PlayerLook : MonoBehaviour
 {
     private Player player;
     [SerializeField] private Camera camera;
-    [SerializeField] private float xSensitivity = 30f;
-    [SerializeField] private float ySensitivity = 30f;
+
+    [Header("Sensitivity")]
+    [SerializeField] private float xSensitivity = 12f;
+    [SerializeField] private float ySensitivity = 12f;
+
+    [Header("Dead Zone")]
+    [SerializeField, Range(0f, 1f)] private float freeLookZone = 0.2f;
+    private Vector2 lookOffset;
+
+
+    [Header("Input Debug")]
     [SerializeField, ReadOnly] private Vector2 lookInput;
     [SerializeField, ReadOnly] private float xRotation;
+
+    public Vector2 LookInput => lookInput;
 
     private void Awake()
     {
@@ -19,33 +30,63 @@ public class PlayerLook : MonoBehaviour
 
     private void OnEnable()
     {
+        if (player == null)
+            return;
+
         player.OnLookPerformed += OnLookPerformed;
+        player.OnLookCanceled += OnLookCanceled;
     }
 
     private void OnDisable()
     {
+        if (player == null)
+            return;
+
         player.OnLookPerformed -= OnLookPerformed;
+        player.OnLookCanceled -= OnLookCanceled;
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         ProcessLook();
     }
 
     private void ProcessLook()
     {
-        float mouseX = lookInput.x;
-        float mousey = lookInput.y;
+        if (player == null || camera == null)
+            return;
 
-        xRotation -= (mousey * Time.deltaTime) * ySensitivity;
+        lookOffset += lookInput;
+
+        lookOffset.x = Mathf.Clamp(lookOffset.x, -1f, 1f);
+        lookOffset.y = Mathf.Clamp(lookOffset.y, -1f, 1f);
+
+        if (IsInsideFreeLookZone())
+            return;
+
+        float mouseX = lookInput.x * xSensitivity * Time.deltaTime;
+        float mouseY = lookInput.y * xSensitivity * Time.deltaTime;
+
+        xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
-        camera.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
-        transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * xSensitivity);
+        camera.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        transform.Rotate(Vector3.up * mouseX);
+    }
+
+    private bool IsInsideFreeLookZone()
+    {
+        return Mathf.Abs(lookOffset.x) <= freeLookZone &&
+           Mathf.Abs(lookOffset.y) <= freeLookZone;
     }
 
     private void OnLookPerformed(InputAction.CallbackContext ctx)
     {
         lookInput = ctx.ReadValue<Vector2>();
+    }
+
+    private void OnLookCanceled(InputAction.CallbackContext ctx)
+    {
+        lookInput = Vector2.zero;
     }
 }
