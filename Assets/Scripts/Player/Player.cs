@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     public PlayerData Data {  get; private set; }
 
-    private PlayerControls playerControls;
+    public PlayerControls playerControls { get; private set; }
 
     public event Action<InputAction.CallbackContext> OnMovementStarted;
     public event Action<InputAction.CallbackContext> OnMovementPerformed;
