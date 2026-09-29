@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    private Player player;
+    private PlayerBehavior player;
     private CharacterController controller;
 
     [SerializeField, ReadOnly] private Vector2 movementInput;
@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        player = GetComponent<Player>();
+        player = GetComponent<PlayerBehavior>();
         if (player == null)
             Application.Quit();
 
@@ -67,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
         playerVelocity.y += gravityValue * Time.deltaTime;
 
         // Move
-        Vector3 finalMove = move * player.Data.Speed + Vector3.up * playerVelocity.y;
+        Vector3 finalMove = move * player.player.Speed + Vector3.up * playerVelocity.y;
         controller.Move(finalMove * Time.deltaTime);
     }
 
@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
         // Jump using WasPressedThisFrame()
         if (groundedPlayer && ctx.action.WasPressedThisFrame())
         {
-            playerVelocity.y = Mathf.Sqrt(player.Data.JumpHeight * -2f * gravityValue);
+            playerVelocity.y = Mathf.Sqrt(player.player.JumpHeight * -2f * gravityValue);
         }
     }
 }

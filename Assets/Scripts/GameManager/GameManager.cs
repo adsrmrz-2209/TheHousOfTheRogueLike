@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Player player;
-    public PlayerData player1Data {  get; private set; }
+    [SerializeField] private PlayerBehavior player;
+    public Player player1 {  get; private set; }
     private void Awake()
     {
         CreatePlayer1();
@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
 
     private void CreatePlayer1()
     {
-        player1Data = new();
-        player = Instantiate(player, player1Data.SpawnPosition, Quaternion.identity);
-        player.InitData(player1Data);
+        player1 = new();
+        player = Instantiate(player, player1.SpawnPosition, Quaternion.identity);
+        player.InitData(player1);
     }
 }

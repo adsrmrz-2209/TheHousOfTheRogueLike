@@ -5,7 +5,7 @@ using Unity.Cinemachine;
 
 public class PlayerLook : MonoBehaviour
 {
-    private Player player;
+    private PlayerBehavior player;
     [SerializeField] private Camera camera;
 
     [Header("Sensitivity")]
@@ -20,7 +20,7 @@ public class PlayerLook : MonoBehaviour
 
     private void Awake()
     {
-        player = GetComponent<Player>();
+        player = GetComponent<PlayerBehavior>();
     }
 
     private void Update()
